@@ -1,0 +1,36 @@
+---
+- hosts: all:!localhost
+  connection: local
+  become: true
+  tasks:
+  - name: Add user and set group 
+    user:
+      name: mito
+      comment: Michael
+      group: wheel
+  - name: Set authorized key
+    authorized_key: 
+      user: mito
+      state: present 
+      key: "{{ lookup('file', '/provision/mitoKey.pb') }}"
+  - name: Delete password for mito
+    shell: passwd -d mito
+  - name: Add user and set group 
+    user:
+      name: python
+      comment: pythoncli
+      group: wheel
+  - name: Add user and set group 
+    user:
+      name: python2
+      comment: pythoncli
+      group: wheel
+  - name: Install list of packages
+    yum:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - wget
+      - tmux
+      - docker
+                
